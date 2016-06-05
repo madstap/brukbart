@@ -4,6 +4,9 @@
 (defn one? "Returns true if x is one, else false"
   [x] (== 1 x))
 
+(defn two? "Returns true if x is two, else false"
+  [x] (== 2 x))
+
 ;; Use medley
 (defn map-keys [f m]
   (into (empty m)
