@@ -44,14 +44,23 @@
   ([pred coll]
    (sequence (find-indices pred) coll)))
 
-(defn find-index
-  [pred coll]
-  (reduce-kv (fn [_ i x] (when (pred x) (reduced i))) nil coll))
-
 (defn reduce-indexed
   "Reduce with index, expects a function with arity [acc index x]"
   [f init coll]
   (reduce-kv f init (vec coll)))
+
+(s/fdef reduce-indexed
+  :args (s/cat :reducing-fn
+               (s/fspec :args
+                        (s/cat :accumulator any?
+                               :index nat-int?
+                               :input any?))
+               :init any?
+               :coll seqable?))
+
+(defn find-index
+  [pred coll]
+  (reduce-indexed (fn [_ i x] (when (pred x) (reduced i))) nil coll))
 
 (def ^:private unpack-keysets
   "Takes a map that may have sets as keys and unpacks the sets.
