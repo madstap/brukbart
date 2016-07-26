@@ -37,9 +37,12 @@
           nil coll))
 
 (defn find-indices
-  "Returns a sequence of indices i where (pred (nth coll i))"
-  [pred coll]
-  (keep-indexed (fn [i x] (when (pred x) i)) coll))
+  "Returns a sequence of indices i where (pred (nth coll i))
+  Returns a transducer when called without a collection."
+  ([pred]
+   (keep-indexed (fn [i x] (when (pred x) i))))
+  ([pred coll]
+   (sequence (find-indices pred) coll)))
 
 (defn find-index
   [pred coll]
