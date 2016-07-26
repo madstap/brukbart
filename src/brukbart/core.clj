@@ -256,7 +256,7 @@
   :args (s/* symbol?)
   :ret (s/map-of simple-keyword? symbol?)
   :fn #(->> [(:args %) (vals (:ret %)) (keys (:ret %))]
-         (map name) set (apply =)))
+         (map (partial map name)) (map set) (apply =)))
 
 (defmacro for-loop
   "Imperative for-loop. Runs untill check is false.
