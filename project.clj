@@ -1,4 +1,4 @@
-(defproject brukbart "0.1.0-SNAPSHOT"
+(defproject brukbart "0.1.1-SNAPSHOT"
   :description "Some useful stuff"
   :url "http://github.com/madstap/brukbart"
   :license {:name "Eclipse Public License"
