@@ -68,7 +68,8 @@
             any?))
 
 (defn interpose-indexed
-  "Returns a seq of the elements of coll with sep interposed at the indices provided."
+  "Returns a seq of the elements of coll with sep interposed at the indices provided.
+  Returns a transducer when called without a collection."
   ([sep indices]
    (let [indices (set indices)]
      (fn [rf]
@@ -76,10 +77,10 @@
          (fn
            ([] (rf))
            ([result] (rf result))
-           ([result x]
+           ([result input]
             (if (indices (vswap! i inc))
-              (reduce rf result [sep x])
-              (rf result x))))))))
+              (-> result (rf sep) (rf input))
+              (rf result input))))))))
   ([sep indices coll]
    (sequence (interpose-indexed sep indices) coll)))
 
@@ -89,7 +90,7 @@
                :coll (s/? seqable?)))
 
 (defn inject-indexed
-  "Returns a seq of the elements of coll with sep interposed at the indices provided.
+  "Takes a map of indices or sets of indices to values, injects the values at indices.
   Returns a transducer when called without a collection."
   ([index->x]
    (let [i->x (unpack-keysets index->x)]
@@ -102,7 +103,7 @@
             (let [i (vswap! curr-i inc)
                   x (i->x i ::none)]
               (if-not (= ::none x)
-                (reduce rf result [x input])
+                (-> result (rf x) (rf input))
                 (rf result input)))))))))
   ([index->x coll]
    (sequence (inject-indexed index->x) coll)))
