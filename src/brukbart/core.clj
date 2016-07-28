@@ -189,6 +189,19 @@
 
 (s/fdef deep-merge :args (s/* (s/nilable map?)), :ret map?)
 
+(defn deep-merge-with
+  "Like merge-with, but merges maps recursively, applying the given fn
+  only when there's a non-map at a particular level.
+  (deepmerge + {:a {:b {:c 1 :d {:x 1 :y 2}} :e 3} :f 4}
+               {:a {:b {:c 2 :d {:z 9} :z 3} :e 100}})
+  -> {:a {:b {:z 3, :c 3, :d {:z 9, :x 1, :y 2}}, :e 103}, :f 4}"
+  [f & maps]
+  (apply (fn m [& maps]
+           (if (every? map? maps)
+             (apply merge-with m maps)
+             (apply f maps)))
+         maps))
+
 (defn month-keys
   "Three letter keys for the months of the year.
   Takes an optional lang parameter (:en :pt :no), default :en"
@@ -239,8 +252,8 @@
   "Like for but eager and takes a key expression and a value expression to make a map.
   Equal keys are treated as if repeatedly assoced."
   {:style/indent 1}
-  [seq-exprs key-exprs value-exprs]
-  `(into {} (for ~seq-exprs [~key-exprs ~value-exprs])))
+  [seq-exprs key-expr value-expr]
+  `(into {} (for ~seq-exprs [~key-expr ~value-expr])))
 
 (defmacro vars->map
   "Takes a variable number of symbols that resolve to some value
@@ -248,8 +261,7 @@
 
   (def a 10)
   (let [b 20]
-    (vars->map foo/a b)) ;=> {:a 10 :b 20}
-  "
+    (vars->map foo/a b)) ;=> {:a 10 :b 20}"
   [& vars] (for-map [v vars] (keyword (name v)) v))
 
 (s/fdef vars->map
