@@ -1,4 +1,4 @@
-(ns brukbart.eua)
+(ns brukbart.usa)
 
 (def states
   "A map from state-codes (lowercase keywords) to names."
